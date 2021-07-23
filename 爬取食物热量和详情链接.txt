@@ -1,0 +1,60 @@
+from gevent import monkey
+monkey.patch_all()
+from gevent.queue import Queue
+
+import requests
+import gevent
+from bs4 import BeautifulSoup
+
+# 创建work的Q队列
+work = Queue()
+
+# headers = {
+#     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'
+# }
+
+# 构造前4个常见食物分类的前4页食物数据的请求url
+for x in range(1, 4):
+    for y in range(1, 4):
+        start_url = 'https://www.boohee.com/food/group/{}?page={}'.format(x, y)
+        # 把构造的url使用put_nowait()放入/添加到work队列中
+        work.put_nowait(start_url)
+
+# 构造第11个常见食物分类的前4页食物数据的请求url
+for x in range(1, 4):
+    start_url = 'https://www.boohee.com/food/view_menu?page={}'.format(x)
+    work.put_nowait(start_url)
+    # print(start_url)
+
+def boohee_spider():
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'
+    }
+    # 当队列是空的时候,就执行下面的程序
+    while not work.empty():
+        url = work.get_nowait()  # 使用get_nowait()方法将请求头url从队列中提取出来
+        res = requests.get(url=url, headers=headers)
+        if res.status_code == 200:
+
+            bs_res = BeautifulSoup(res.text, 'html.parser')
+            datas = bs_res.find_all('li', class_='item clearfix')
+            for data in datas:
+                # 食物名称
+                food_name = data.find_all('a')[1]['title']
+                # 食物详情链接
+                food_url = 'https://www.boohee.com' + data.find_all('a')[1]['href']
+                # 食物热量
+                food_calorie = data.find('p').text
+                print(food_name, food_url, food_calorie)
+        else:
+            print("请求失败")
+
+boohee_spider()
+
+task_list = []
+for i in range(1, 6):
+    task = gevent.spawn(boohee_spider)  # 使用gevent.spawn()函数创建执行的boohee_spider()爬虫任务
+    task_list.append(task)
+
+# 使用gevent.join_all()方法,启动协程,执行任务列表task_list
+gevent.joinall(task_list)

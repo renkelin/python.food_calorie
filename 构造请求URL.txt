@@ -1,0 +1,30 @@
+# 爬取前4个常见食物分类的前4页食物数据  group
+# 第一类食物的第1个页面的请求url: https://www.boohee.com/food/group/1
+# 第一类食物的第2个页面的请求url: https://www.boohee.com/food/group/1?page=2
+# 第一类食物的第3个页面的请求url: https://www.boohee.com/food/group/1?page=3
+# 第一类食物的第4个页面的请求url: https://www.boohee.com/food/group/1?page=4
+
+# 第二类食物的第1个页面的请求url: https://www.boohee.com/food/group/2
+# 第二类食物的第2个页面的请求url: https://www.boohee.com/food/group/2?page=2
+# 第二类食物的第3个页面的请求url: https://www.boohee.com/food/group/2?page=3
+# 第二类食物的第4个页面的请求url: https://www.boohee.com/food/group/2?page=4
+
+# 构造前4个常见食物分类的前4页食物数据的请求url
+# start_url = 'https://www.boohee.com/food/group/{}?page={}'.format(x, y)
+for x in range(1, 5):
+    # print(x)
+    for y in range(1, 5):
+        start_url = 'https://www.boohee.com/food/group/{}?page={}'.format(x, y)
+        # print(start_url)
+
+
+# 第11个常见食物分类的前4页食物数据  view menu
+# 第十一类食物的第1个页面的请求url: https://www.boohee.com/food/view_menu
+# 第十一类食物的第2个页面的请求url: https://www.boohee.com/food/view_menu?page=2
+# 第十一类食物的第3个页面的请求url: https://www.boohee.com/food/view_menu?page=3
+# 第十一类食物的第4个页面的请求url: https://www.boohee.com/food/view_menu?page=4
+
+# 构造第11个常见食物分类的前4页食物数据的请求url
+for x in range(1, 5):
+    start_url = 'https://www.boohee.com/food/view_menu?page={}'.format(x)
+    print(start_url)
